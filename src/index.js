@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const fs = require("fs");
 const app = express();
-const port = 80;
 
 app.get('/', (req, res) => {
   var back = {
@@ -69,6 +68,4 @@ app.get('/cape/:username', (req,res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-});
+app.listen();
