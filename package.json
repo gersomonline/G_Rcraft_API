@@ -1,0 +1,20 @@
+{
+  "name": "grcraft-api",
+  "version": "1.0.0",
+  "description": "Official API for G_Rcraft",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "g_rcraft",
+    "grcraft"
+  ],
+  "author": "G_Rcraft",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}
