@@ -30,7 +30,7 @@ app.get('/cape/:username', (req,res) => {
       var path = `${__dirname}/assets/${uuid}.png`;
       if(fs.existsSync(path)) {
         console.log(path);
-        res.download(path);
+        res.sendFile(path);
       }else {
         console.log("Couldn't find matching cape, checking with Mojang.");
         axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`)
