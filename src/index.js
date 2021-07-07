@@ -16,6 +16,33 @@ app.get('/', (req, res) => {
   res.send(back)
 });
 
+app.get('/hat/:username', (req, res) => {
+  var username = req.params.username;
+  var uuid = "";
+  // Get the UUID from the Mojang API
+  axios.get(`https://api.mojang.com/users/profiles/minecraft/${username}`)
+  .then(function (response) {
+
+    // handle success
+    if(response.status == 200) {
+      uuid = response.data.id;
+      console.log(`Checking UUID of: ${uuid}`);
+      var returnable = {
+        "username": username,
+        "uuid": uuid
+      };
+      res.send(returnable);
+      res.status(200);
+      res.end();
+    }else {
+      console.log(response);
+      res.status(response.status);
+      res.end();
+    }
+
+  });
+});
+
 app.get('/cape/:username', (req,res) => {
   var username = req.params.username;
   var uuid = "";
@@ -25,7 +52,7 @@ app.get('/cape/:username', (req,res) => {
     // handle success
     if(response.status == 200) {
       uuid = response.data.id;
-      console.log("Checking UUID of: " + uuid);
+      console.log(`Checking UUID of: ${uuid}`);
       // API stuff happening here
       var path = `${__dirname}/assets/${uuid}.png`;
       if(fs.existsSync(path)) {
