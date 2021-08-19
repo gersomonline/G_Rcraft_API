@@ -4,6 +4,9 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
+const latestPreVersion = 'pre-0.1';
+const latestPreVersionURL = 'pre-0.1';
+
 app.get('/', (req, res) => {
   var back = {
     "Status": "OK",
@@ -14,6 +17,37 @@ app.get('/', (req, res) => {
     "Application-Owner": "G_Rcraft"
   };
   res.send(back)
+});
+
+app.get('/version/latest/pre', (req, res) => {
+
+  var response = {
+    status: 200,
+    version: latestPreVersion,
+    changelog: "https://someamazingchangeloglink.com"
+  }
+
+  res.send(response);
+
+});
+
+app.get('/version/download/:version', (req, res) => {
+  try {
+    const path = `${__dirname}/assets/versions/${req.params.version}.zip`;
+    if(fs.existsSync(path)) {
+      res.sendFile(path);
+    } else {
+      console.log(`Invalid version requested: ${req.params.version}`);
+      res.send(
+        {
+          status: 404,
+          message: "Version file not found!"
+        }
+      )
+    }
+  } catch (err) {
+      console.error(err);
+  }
 });
 
 app.get('/hat/:username', (req, res) => {
@@ -27,15 +61,18 @@ app.get('/hat/:username', (req, res) => {
     if(response.status == 200) {
       uuid = response.data.id;
       console.log(`Checking UUID of: ${uuid}`);
-      var returnable = {
-        "username": username,
-        "uuid": uuid
-      };
-      res.send(returnable);
-      res.status(200);
-      res.end();
+      // API stuff happening here
+      var path = `${__dirname}/assets/hats/${uuid}.png`;
+      if(fs.existsSync(path)) {
+        console.log(path);
+        res.sendFile(path);
+        res.status(200);
+      }else {
+        console.log("Couldn't find matching cape, cancelling request.");
+        res.status(404);
+        res.end();
+      }
     }else {
-      console.log(response);
       res.status(response.status);
       res.end();
     }
@@ -54,20 +91,17 @@ app.get('/cape/:username', (req,res) => {
       uuid = response.data.id;
       console.log(`Checking UUID of: ${uuid}`);
       // API stuff happening here
-      var path = `${__dirname}/assets/${uuid}.png`;
+      var path = `${__dirname}/assets/capes/${uuid}.png`;
       if(fs.existsSync(path)) {
-        console.log(path);
         res.sendFile(path);
       }else {
         console.log("Couldn't find matching cape, checking with Mojang.");
         axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`)
         .then(function(response) {
-          console.log(response.status);
           if(response.status == 200) {
             var textures = JSON.parse(Buffer.from(response.data.properties[0].value, 'base64').toString('utf-8'));
-            console.log(textures);
             try {
-            var cape = textures.textures.CAPE.url;
+              var cape = textures.textures.CAPE.url;
             }catch(e) {
               console.log("Couldn't find matching cape, redirecting to Optifine instead.");
               var url = "http://s.optifine.net/capes/" + username + ".png";
@@ -85,7 +119,6 @@ app.get('/cape/:username', (req,res) => {
         });
       }
     }else {
-      console.log(response);
       res.status(response.status);
       res.end();
     }
