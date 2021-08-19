@@ -4,8 +4,7 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
-const latestPreVersion = 'pre-0.1';
-const latestPreVersionURL = 'pre-0.1';
+const latestPreVersion = 'pre-0.2';
 
 app.get('/', (req, res) => {
   var back = {
@@ -24,7 +23,7 @@ app.get('/version/latest/pre', (req, res) => {
   var response = {
     status: 200,
     version: latestPreVersion,
-    changelog: "https://someamazingchangeloglink.com"
+    changelog: "https://discord.com/channels/877241869522858014/877251064976527450/877950676813107210"
   }
 
   res.send(response);
