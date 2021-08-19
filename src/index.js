@@ -32,22 +32,7 @@ app.get('/version/latest/pre', (req, res) => {
 });
 
 app.get('/version/download/:version', (req, res) => {
-  try {
-    const path = `${__dirname}/assets/versions/${req.params.version}.zip`;
-    if(fs.existsSync(path)) {
-      res.sendFile(path);
-    } else {
-      console.log(`Invalid version requested: ${req.params.version}`);
-      res.send(
-        {
-          status: 404,
-          message: "Version file not found!"
-        }
-      )
-    }
-  } catch (err) {
-      console.error(err);
-  }
+  res.redirect(`https://github.com/GersomR-afk/G_Rcraft_API/releases/download/${req.params.version}/${req.params.version}.zip`)
 });
 
 app.get('/hat/:username', (req, res) => {
