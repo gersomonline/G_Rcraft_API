@@ -23,7 +23,7 @@ app.get('/version/latest/pre', (req, res) => {
   var response = {
     status: 200,
     version: latestPreVersion,
-    changelog: "https://discord.com/channels/877241869522858014/877251064976527450/877950676813107210"
+    changelog: "https://discord.com/channels/877241869522858014/877251064976527450/879319528323055687"
   }
 
   res.send(response);
