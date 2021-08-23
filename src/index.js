@@ -4,7 +4,7 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
-const latestPreVersion = 'pre-0.2';
+const latestPreVersion = 'pre-0.3';
 
 app.get('/', (req, res) => {
   var back = {
@@ -28,6 +28,23 @@ app.get('/version/latest/pre', (req, res) => {
 
   res.send(response);
 
+});
+
+app.get('/mods', (req, res) => {
+  setTimeout(function() {
+    res.send(
+      {
+        mods: [
+          {
+            title: "Coming soon!",
+            author: ":)",
+            description: "You will see some amazing mods here soon!",
+            url: ""
+          }
+        ]
+      }
+    ).end();
+  }, 1000);
 });
 
 app.get('/version/download/:version', (req, res) => {
