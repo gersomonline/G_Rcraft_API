@@ -4,7 +4,7 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
-const latestPreVersion = 'pre-0.3';
+const latestPreVersion = 'pre-0.4';
 
 app.get('/', (req, res) => {
   var back = {
