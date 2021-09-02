@@ -39,7 +39,7 @@ app.get('/mods', (req, res) => {
             title: "Coming soon!",
             author: ":)",
             description: "You will see some amazing mods here soon!",
-            url: ""
+            url: "http://foo.bar"
           }
         ]
       }
@@ -82,6 +82,11 @@ app.get('/hat/:username', (req, res) => {
 });
 
 app.get('/cape/:username', (req,res) => {
+  var pref = req.query.pref;
+  // Support for older versions.
+  if(pref == null) {
+    pref = "G_RCRAFT";
+  }
   var username = req.params.username;
   var uuid = "";
   // Get the UUID from the Mojang API
@@ -93,31 +98,50 @@ app.get('/cape/:username', (req,res) => {
       console.log(`Checking UUID of: ${uuid}`);
       // API stuff happening here
       var path = `${__dirname}/assets/capes/${uuid}.png`;
-      if(fs.existsSync(path)) {
+      if(fs.existsSync(path) && pref == "G_RCRAFT") {
         res.sendFile(path);
       }else {
-        console.log("Couldn't find matching cape, checking with Mojang.");
-        axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`)
-        .then(function(response) {
-          if(response.status == 200) {
-            var textures = JSON.parse(Buffer.from(response.data.properties[0].value, 'base64').toString('utf-8'));
-            try {
-              var cape = textures.textures.CAPE.url;
-            }catch(e) {
-              console.log("Couldn't find matching cape, redirecting to Optifine instead.");
-              var url = "http://s.optifine.net/capes/" + username + ".png";
-              res.redirect(url).end(301);
+        if(pref == "MOJANG") {
+          axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`)
+          .then(function(response) {
+            if(response.status == 200) {
+              var textures = JSON.parse(Buffer.from(response.data.properties[0].value, 'base64').toString('utf-8'));
+              try {
+                var cape = textures.textures.CAPE.url;
+                res.redirect(cape).end(301);
+              }catch(e) {
+                console.log("No cape found.");
+                res.status(404);
+              }
             }
-            if(cape != null) {
-              console.log("Cape found! Redirecting...");
-              res.redirect(cape).end(301);
-            }else {
-              console.log("Couldn't find matching cape, redirecting to Optifine instead.");
-              var url = "http://s.optifine.net/capes/" + username + ".png";
-              res.redirect(url).end(301);
+          });
+        }else if(pref == "OPTIFINE") {
+          var url = "http://s.optifine.net/capes/" + username + ".png";
+          res.redirect(url).end(301);
+        }else {
+          console.log("Couldn't find matching cape, checking with Mojang.");
+          axios.get(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`)
+          .then(function(response) {
+            if(response.status == 200) {
+              var textures = JSON.parse(Buffer.from(response.data.properties[0].value, 'base64').toString('utf-8'));
+              try {
+                var cape = textures.textures.CAPE.url;
+              }catch(e) {
+                console.log("Couldn't find matching cape, redirecting to Optifine instead.");
+                var url = "http://s.optifine.net/capes/" + username + ".png";
+                res.redirect(url).end(301);
+              }
+              if(cape != null) {
+                console.log("Cape found! Redirecting...");
+                res.redirect(cape).end(301);
+              }else {
+                console.log("Couldn't find matching cape, redirecting to Optifine instead.");
+                var url = "http://s.optifine.net/capes/" + username + ".png";
+                res.redirect(url).end(301);
+              }
             }
-          }
-        });
+          });
+        }
       }
     }else {
       res.status(response.status);
