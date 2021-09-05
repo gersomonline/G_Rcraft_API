@@ -22,8 +22,18 @@ app.get('/version/latest/pre', (req, res) => {
 
   var response = {
     status: 200,
-    version: latestPreVersion,
-    changelog: "https://discord.com/channels/877241869522858014/877251064976527450/882920389137805324"
+    versions: [
+      {
+        version: latestPreVersion,
+        gameVersion: "1.17",
+        changelog: "https://discord.com/channels/877241869522858014/877251064976527450/882920389137805324"
+      },
+      {
+        version: latestPreVersion,
+        gameVersion: "1.8",
+        changelog: "https://discord.com/channels/877241869522858014/877251064976527450/882920389137805324"
+      },
+    ]
   }
 
   res.send(response);
@@ -47,8 +57,12 @@ app.get('/mods', (req, res) => {
   }, 1000);
 });
 
-app.get('/version/download/:version', (req, res) => {
-  res.redirect(`https://github.com/GersomR-afk/G_Rcraft_API/releases/download/${req.params.version}/${req.params.version}.zip`)
+app.get('/version/download/:gameVersion/:version', (req, res) => {
+  res.send(
+    {
+      url: `https://github.com/GersomR-afk/G_Rcraft_API/releases/download/${req.params.version}/${req.params.version}-${req.params.gameVersion}.zip`
+    }
+  )
 });
 
 app.get('/hat/:username', (req, res) => {
